@@ -15,6 +15,7 @@ const players = {};
         app.stage.addChild(container);
 
         socket.on('init', (data) => {
+            attack(app);
             for (const id in data.players) {
                 createPlayer(id, app);
             }
@@ -39,7 +40,7 @@ const players = {};
           }
       });
 
-      attack(app);
+      
         container.x = app.screen.width / 2;
         container.y = app.screen.height / 2;
     
