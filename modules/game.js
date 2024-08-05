@@ -4,6 +4,8 @@ import Player from "./player.js";
 import { NEW_PLAYER, PLAYER_DISCONNECTED, PLAYER_MOVED, CURRENT_PLAYERS, PLAYER_IS_MOVING } from "../status.js";
 
 export default class Game extends Phaser.Scene {
+    players = {};
+
     constructor() {
         super({ key: "Game" });
     }
@@ -14,77 +16,60 @@ export default class Game extends Phaser.Scene {
         this.add.image(400, 300, 'background');
     }
 
-    update(){
-        if(this.player){
-            const currentCoordinates = { x: this.player.x, y: this.player.y };
+    update() {
+        const currentCoordinates = { x: this.player?.x ?? 0, y: this.player?.y ?? 0 };
+
+        if (this.player && this.player.oldPosition && (this.player.x !== this.player.oldPosition.x || this.player.y !== this.player.oldPosition.y)) {
+            this.socket.emit(PLAYER_IS_MOVING, { name: this.player.name, ...currentCoordinates });
         }
-        if(this.player && this.player.oldPosition && (this.player.x !== this.player.oldPosition.x || this.player.y !== this.player.oldPosition.y)){
-            this.socket.emit(PLAYER_IS_MOVING, {key: this.player.key, ...currentCoordinates});
-        }
+
     }
 
     startSocket() {
         this.socket = io("http://localhost:2020");
-        this.addPlayer();
-        this.otherPlayers = {};
-        this.socket.on(
-            NEW_PLAYER,
-            function (playerInfo) {
-              this.addEnemy(playerInfo);
-            }.bind(this)
-          );
-      
-          this.socket.on(
-            CURRENT_PLAYERS,
-            function (players) {
-              Object.keys(players).forEach((key) => {
-                if (!this.otherPlayers[key] && key !== this.player.key)
-                  this.addEnemy(players[key]);
-              });
-            }.bind(this)
-          );
-      
-          this.socket.on(
-            PLAYER_MOVED,
-            function (playerInfo) {
-              const [name, key] = playerInfo.name.split(":");
-              if (this.otherPlayers[key]) {
-                this.otherPlayers[key].setPosition(playerInfo.x, playerInfo.y);
-              }
-            }.bind(this)
-          );
-      
-          this.socket.on(
-            PLAYER_DISCONNECTED,
-            function (key) {
-              this.enemyPlayers.getChildren().forEach(function (otherPlayer) {
-                if (key === otherPlayer.key) {
-                  otherPlayer.destroy();
-                }
-              });
-            }.bind(this)
-          );
-        }
+        this.socket.on("connect", () => {
+            //! BUG - coordinates shouold't be string
+            this.addCurrentPlayer(this.socket.id, Math.round(Math.random() * 10), Math.round(Math.random() * 10)); // Добавление текущего игрока
+        });
+        this.socket.on(CURRENT_PLAYERS, (data) => {
+            for (const [key, value] of Object.entries(data.players)) {
+                if (key === this.socket.id) continue;
+                this.addPlayer(key, value.x, value.y);
+            }
+        });
+        this.socket.on(NEW_PLAYER, (data) => {
+            if (data.name != this.socket.id) {
+                console.log(data);
+                this.addPlayer(data.name, data.data.x, data.data.y);
+            }
+        });
+        this.socket.on(PLAYER_MOVED, (data) => {
+            this.players[data.name].x = data.data.x;
+            this.players[data.name].y = data.data.y;
+        });
+        this.socket.on(PLAYER_DISCONNECTED, (data) => {
+            this.players[data.name].destroy();
+            delete this.players[data.name];
+        });
+    }
 
     startGame() {
         if (this.theme) this.theme.stop();
         this.scene.start("game");
     }
 
-    addEnemy(enemyPlayer){
-        const [name, key] = enemyPlayer.name.split(":");
-        this.enemy = new Player(this, 0, 0, enemyPlayer.name, 'another_player');
-        this.otherPlayers[key] = this.enemy;
+    addPlayer(key, x, y) {
+        const name = key
+        this.players[key] = new Player(this, x, y, name, true);
     }
 
-    addPlayer() {
-        this.player = new Player(this, 0, 0, 'Name:' + crypto.randomUUID(), 'player');
-        console.log('Creating player ' + this.player.name);
-        this.socket.emit(NEW_PLAYER, this.player);
+    addCurrentPlayer(name, x, y) {
+        this.player = new Player(this, x, y, name, false);
+        this.socket.emit("add_player", { x: this.player.x, y: this.player.y });
         this.setCamera();
     }
 
-    setCamera(){
+    setCamera() {
         this.cameras.main.startFollow(this.player, 0, 0, false);
     }
 }

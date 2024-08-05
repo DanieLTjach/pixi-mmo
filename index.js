@@ -8,6 +8,5 @@ let config = {
     scene: [Bootloader, Game]
 }
 
-let players = {};
 let game = new Phaser.Game(config);
 
