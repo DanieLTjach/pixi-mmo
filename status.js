@@ -17,10 +17,15 @@
     export const ASSETS = {
         BACKGROUND: 'assets/sky.png',
         PLAYER: 'assets/player.png',
-        ANOTHER_PLAYER: 'assets/another_player.png'
+        ANOTHER_PLAYER: 'assets/another_player.png',
+        SOMETHING: 'assets/something.png'
     };
 
     export const SCENE_CONFIG = {
         WIDTH: 800,
         HEIGHT: 600,
+    }
+
+    export const SERVER = {
+        URL: 'http://localhost:2020'
     }

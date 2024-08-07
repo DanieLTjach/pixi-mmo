@@ -1,89 +1,77 @@
 import { CONTROLLER } from "../status.js";
 
-class Player extends Phaser.GameObjects.Sprite {
+class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, id, isEnemy) {
-        super(scene, x, y, isEnemy);
+        super(scene, x, y, isEnemy ? 'another_player' : 'player');
+
         this.name = id;
         this.health = 100;
         this.scene = scene;
         this.isEnemy = Boolean(isEnemy);
-        if(isEnemy === true){
-            this.setTexture('another_player');
-        }
-        else{
-            this.setTexture('player');
-        }
+
+        // Добавление объекта игрока на сцену и настройка физики
         scene.add.existing(this);
+        scene.physics.add.existing(this);
+
+        // Настройка физических свойств
+        this.body.setCollideWorldBounds(true);
+
         this.x = x;
         this.y = y;
         this.mouseX = 0;
         this.mouseY = 0;
         this.look_angle = 0;
-        this.pressedKeys = {up: false, down: false, left: false, right: false, attack: false};
+        this.pressedKeys = { up: false, down: false, left: false, right: false, attack: false };
+
         this.init();
     }
 
-    init(){
+    init() {
         this.scene.events.on('update', this.update, this);
         this.scene.input.mouse.disableContextMenu();
-        if(!this.isEnemy){
-        this.text1 = this.scene.add.text(10, 10, this.health, { fontSize: '10px', fill: '#000' });
-        }
         this.InputKeys = this.scene.input.keyboard.addKeys('W, A, S, D');
-        console.log(this.name);
     }
 
     update() {
-        if(!this.isEnemy){
-            this.text1.setText(this.health);
-            this.scene.input.on('pointermove', (pointer) => {
-                this.mouseX = pointer.worldX;
-                this.mouseY = pointer.worldY;
-                this.look_angle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY);
-                const angleDeg = Phaser.Math.RadToDeg(this.look_angle);
-                if (-45 <= angleDeg && angleDeg <= 45) {
-                    this.angle = 0;
-                }
-                if (45 < angleDeg && angleDeg <= 135) {
-                    this.angle = 90;
-                }
-                if ((135 < angleDeg && angleDeg <= 180) || (-180 <= angleDeg && angleDeg <= -135)) {
-                    this.angle = 180;
-                }
-                if (-135 < angleDeg && angleDeg <= -45) {
-                    this.angle = -90;
-                }
-            });
+        if (!this.isEnemy) {
             this.scene.input.on('pointerdown', (pointer) => {
-                if(pointer.leftButtonDown()){
+                if (pointer.leftButtonDown()) {
                     this.pressedKeys.attack = true;
                     this.look_angle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY);
                 } 
             });
             this.scene.input.on('pointerup', (pointer) => {
-                if(pointer.leftButtonReleased()){
+                if (pointer.leftButtonReleased()) {
                     this.pressedKeys.attack = false;
                 }
             });
             if (this.InputKeys.W.isDown) {
                 this.pressedKeys.up = true; 
-            }else if(this.InputKeys.W.isUp){
+                this.body.setVelocityY(-100);
+            } else if (this.InputKeys.W.isUp) {
                 this.pressedKeys.up = false;
+                this.body.setVelocityY(0);
             }
             if (this.InputKeys.S.isDown) {
                 this.pressedKeys.down = true;
-            }else if(this.InputKeys.S.isUp){
+                this.body.setVelocityY(100);
+            } else if (this.InputKeys.S.isUp) {
                 this.pressedKeys.down = false;
+                this.body.setVelocityY(0);
             }
             if (this.InputKeys.A.isDown) {
                 this.pressedKeys.left = true;
-            }else if(this.InputKeys.A.isUp){
+                this.body.setVelocityX(-100);
+            } else if (this.InputKeys.A.isUp) {
                 this.pressedKeys.left = false;
+                this.body.setVelocityX(0);
             }
             if (this.InputKeys.D.isDown) {
                 this.pressedKeys.right = true;
-            } else if(this.InputKeys.D.isUp){
+                this.body.setVelocityX(100);
+            } else if (this.InputKeys.D.isUp) {
                 this.pressedKeys.right = false;
+                this.body.setVelocityX(0);
             }
             this.setPosition(this.x, this.y);
         }
