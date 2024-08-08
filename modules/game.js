@@ -49,25 +49,26 @@ export default class Game extends Phaser.Scene {
                 this.players[this.socket.id].pressedKeys.attack = false;
             }
         }
+        this.physics.add.collider(this.playersGroup, this.something);
     }
 
     startSocket() {
         this.socket = io(SERVER.URL);
         this.socket.on("connect", () => {
-            this.addCurrentPlayer(this.socket.id, (SCENE_CONFIG.WIDTH / 2) + Math.round(Math.random() * 10), (SCENE_CONFIG.HEIGHT / 2) + Math.round(Math.random() * 10));
+            this.addCurrentPlayer(this.socket.id, this.socket.id, (SCENE_CONFIG.WIDTH / 2) + Math.round(Math.random() * 10), (SCENE_CONFIG.HEIGHT / 2) + Math.round(Math.random() * 10));
             this.current_player_name = this.socket.id;
             console.log(this.current_player_name);
         });
         this.socket.on(CURRENT_PLAYERS, (data) => {
             for (const [key, value] of Object.entries(data.players)) {
                 if (key === this.socket.id) continue;
-                this.addPlayer(key, value.x, value.y);
+                this.addPlayer(key, key, value.x, value.y);
             }
         });
         this.socket.on(NEW_PLAYER, (data) => {
             if (data.name != this.socket.id) {
                 console.log(data);
-                this.addPlayer(data.name, data.x, data.y);
+                this.addPlayer(data.name, data.name, data.x, data.y);
             }
         });
         this.socket.on(PLAYER_MOVED, (data) => {
@@ -95,7 +96,7 @@ export default class Game extends Phaser.Scene {
         this.scene.start("game");
     }
 
-    addPlayer(key, x, y) {
+    addPlayer(nickname, key, x, y) {
         const name = key;
         const player = new Player(this, x, y, name, true);
         this.players[key] = player;
@@ -107,12 +108,12 @@ export default class Game extends Phaser.Scene {
         player.body.setCollideWorldBounds(true);
     }
 
-    addCurrentPlayer(key, x, y) {
+    addCurrentPlayer(nickname, key, x, y) {
         if (!key || this.players[key]) {
             console.error("Invalid or duplicate player key:", key);
             return;
         }
-        const newPlayer = new Player(this, x, y, key, false);
+        const newPlayer = new Player(this, nickname, x, y, key, false);
         this.players[key] = newPlayer;
         this.playersGroup.add(newPlayer);
         this.socket.emit("add_player", { x: newPlayer.x, y: newPlayer.y });

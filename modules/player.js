@@ -1,19 +1,18 @@
 import { CONTROLLER } from "../status.js";
 
 class Player extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, id, isEnemy) {
+    constructor(scene, nickname, x, y, id, isEnemy) {
         super(scene, x, y, isEnemy ? 'another_player' : 'player');
 
         this.name = id;
         this.health = 100;
         this.scene = scene;
         this.isEnemy = Boolean(isEnemy);
+        this.nickname = nickname;
 
-        // Добавление объекта игрока на сцену и настройка физики
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        // Настройка физических свойств
         this.body.setCollideWorldBounds(true);
 
         this.x = x;
@@ -29,11 +28,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     init() {
         this.scene.events.on('update', this.update, this);
         this.scene.input.mouse.disableContextMenu();
+        this.nicknameText = this.scene.add.text(this.x - 20, this.y - 30, this.nickname, { fontSize: '10px', fill: '#000' }); 
         this.InputKeys = this.scene.input.keyboard.addKeys('W, A, S, D');
     }
 
     update() {
         if (!this.isEnemy) {
+            this.nicknameText.setPosition(this.x - 20, this.y - 30);
             this.scene.input.on('pointerdown', (pointer) => {
                 if (pointer.leftButtonDown()) {
                     this.pressedKeys.attack = true;
