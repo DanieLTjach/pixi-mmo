@@ -1,4 +1,5 @@
 import { CONTROLLER } from "../status.js";
+import Inventory from "./invetory.js";
 
 class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, nickname, x, y, id, isEnemy) {
@@ -22,6 +23,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.look_angle = 0;
         this.pressedKeys = { up: false, down: false, left: false, right: false, attack: false };
 
+        // Ссылка на сцену инвентаря
+        this.inventoryScene = scene.scene.get('InventoryScene');
+
         this.init();
     }
 
@@ -29,7 +33,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene.events.on('update', this.update, this);
         this.scene.input.mouse.disableContextMenu();
         this.nicknameText = this.scene.add.text(this.x - 20, this.y - 30, this.nickname, { fontSize: '10px', fill: '#000' }); 
-        this.InputKeys = this.scene.input.keyboard.addKeys('W, A, S, D');
+        this.InputKeys = this.scene.input.keyboard.addKeys('W, A, S, D, I');
     }
 
     update() {
@@ -73,6 +77,14 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             } else if (this.InputKeys.D.isUp) {
                 this.pressedKeys.right = false;
                 this.body.setVelocityX(0);
+            }
+           
+            if (this.InputKeys.I.isDown) {
+                if (this.inventoryScene) {
+                    let inventoryVisible = this.inventoryScene.inventoryVisible;
+                    this.inventoryScene.inventoryVisible = !inventoryVisible;
+                    this.inventoryScene.inventoryGroup.setVisible(!inventoryVisible);
+                }
             }
             this.setPosition(this.x, this.y);
         }
