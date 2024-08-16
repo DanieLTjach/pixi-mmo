@@ -16,14 +16,15 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.body.setCollideWorldBounds(true);
 
+        this.setTexture(isEnemy ? 'another_player' : 'player').setOrigin(0, 0);
+
         this.x = x;
         this.y = y;
         this.mouseX = 0;
         this.mouseY = 0;
         this.look_angle = 0;
-        this.pressedKeys = { up: false, down: false, left: false, right: false, attack: false };
+        this.pressedKeys = { up: false, down: false, left: false, right: false, attack: false, use: false };
 
-        // Ссылка на сцену инвентаря
         this.inventoryScene = scene.scene.get('InventoryScene');
 
         this.init();
@@ -33,7 +34,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene.events.on('update', this.update, this);
         this.scene.input.mouse.disableContextMenu();
         this.nicknameText = this.scene.add.text(this.x - 20, this.y - 30, this.nickname, { fontSize: '10px', fill: '#000' }); 
-        this.InputKeys = this.scene.input.keyboard.addKeys('W, A, S, D, I');
+        this.InputKeys = this.scene.input.keyboard.addKeys('W, A, S, D, I, E');
     }
 
     update() {
@@ -50,33 +51,36 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                     this.pressedKeys.attack = false;
                 }
             });
+
             if (this.InputKeys.W.isDown) {
-                this.pressedKeys.up = true; 
-                this.body.setVelocityY(-100);
-            } else if (this.InputKeys.W.isUp) {
+                this.pressedKeys.up = true;
+            }
+            else if(this.InputKeys.W.isUp) {
                 this.pressedKeys.up = false;
-                this.body.setVelocityY(0);
             }
             if (this.InputKeys.S.isDown) {
                 this.pressedKeys.down = true;
-                this.body.setVelocityY(100);
-            } else if (this.InputKeys.S.isUp) {
+            }
+            else if(this.InputKeys.S.isUp) {
                 this.pressedKeys.down = false;
-                this.body.setVelocityY(0);
             }
             if (this.InputKeys.A.isDown) {
                 this.pressedKeys.left = true;
-                this.body.setVelocityX(-100);
-            } else if (this.InputKeys.A.isUp) {
+            }
+            else if(this.InputKeys.A.isUp) {
                 this.pressedKeys.left = false;
-                this.body.setVelocityX(0);
             }
             if (this.InputKeys.D.isDown) {
                 this.pressedKeys.right = true;
-                this.body.setVelocityX(100);
-            } else if (this.InputKeys.D.isUp) {
+            }
+            else if(this.InputKeys.D.isUp) {
                 this.pressedKeys.right = false;
-                this.body.setVelocityX(0);
+            }
+            if(this.InputKeys.E.isDown) {
+                this.pressedKeys.use = true;
+            }
+            else if(this.InputKeys.E.isUp) {
+                this.pressedKeys.use = false;
             }
            
             if (this.InputKeys.I.isDown) {

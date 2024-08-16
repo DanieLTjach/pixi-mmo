@@ -1,16 +1,15 @@
-// Description: Status codes for the game server.
 
     export const NEW_PLAYER = 'new_player';
     export const PLAYER_DISCONNECTED = 'playerDisconnected';
     export const PLAYER_MOVED = 'playerMoved';
-    export const CONTROLLER = {
-        UP: 'PRESS_W',
-        DOWN: 'PRESS_S',
-        LEFT: 'PRESS_A',
-        RIGHT: 'PRESS_D',
-        ATTACK: 'PRESS_SPACE',
-    }
+    export const CONTROLLER = 'keys_controller';
     export const CURRENT_PLAYERS = 'current_players';
+    export const CURRENT_OBJECTS = 'current_objects';
+    export const PLAYER_CAN_USE = 'player_can_use';
+    export const PLAYER_CANNOT_USE = 'player_cannot_use';
+    export const PLAYER_CAN_ATTACK = 'player_can_attack'
+    export const PLAYER_CANNOT_ATTACK = 'player_cannot_attack'
+    export const PLAYER_USE_OBJECT = 'object_used';
 
 // Description: Links to the assets used in the game.
 
