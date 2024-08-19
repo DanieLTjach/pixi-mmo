@@ -1,5 +1,6 @@
 import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 import Player from "./player.js";
+import Enemy from "./enemy.js";
 import Objects from "./object.js";
 import { NEW_PLAYER, PLAYER_DISCONNECTED, PLAYER_MOVED, CONTROLLER, CURRENT_PLAYERS, SCENE_CONFIG, SERVER, CURRENT_OBJECTS, PLAYER_CAN_USE, PLAYER_CANNOT_USE, PLAYER_USE_OBJECT} from "../status.js";
 
@@ -24,6 +25,9 @@ export default class Game extends Phaser.Scene {
         this.add.image(0, 0, 'background').setOrigin(0, 0);
         this.cameras.main.setBounds(0, 0, SCENE_CONFIG.WIDTH, SCENE_CONFIG.HEIGHT);
         this.player_camera = this.cameras.add(0, 0, SCENE_CONFIG.WIDTH, SCENE_CONFIG.HEIGHT);
+
+        this.addEnemy("enemy1", 300, 300);
+        this.addEnemy("enemy2", 500, 500);
     }
 
     update() {
@@ -126,6 +130,15 @@ export default class Game extends Phaser.Scene {
         this.physics.add.collider(newPlayer, this.something);
         newPlayer.body.setCollideWorldBounds(true);
     }
+
+    addEnemy(nickname, x, y) {
+        const enemy = new Enemy(this, nickname, x, y, `enemy_${nickname}`);
+        this.players[`enemy_${nickname}`] = enemy;
+        this.playersGroup.add(enemy);
+        this.physics.add.collider(enemy, this.something);
+        enemy.body.setCollideWorldBounds(true);
+    }
+
 
     addCamera(name) {
         this.player_camera.startFollow(this.players[name], true);
