@@ -1,0 +1,102 @@
+*, *::before,*::after{
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+img{
+    vertical-align: top;
+}
+h1,h2,h3,h4,h5,h6 {
+    font-weight: inherit;
+    font-size: inherit;
+}
+html, body{
+    height: 100%;
+    line-height: 1;
+    scroll-behavior: smooth;
+}
+body{
+    height: 100%;
+    line-height: 1;
+    font-family: 'Roboto Slab';
+    color: #333333;
+    background-color: #ffffff;
+}
+body {
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}
+body::-webkit-scrollbar { 
+    display: none; 
+}
+.wrapper{
+    position: relative;
+    min-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.container {
+}
+.container_block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3.75rem;
+    gap: 2.5rem;
+}
+.container_block-title {
+    width: 31.25rem;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 1.5625rem;
+    box-shadow: .25rem .25rem .5rem rgb(119, 119, 119);
+    background-color: #0c65e151;
+    border-radius: .9375rem;
+}
+.block-title_img{
+    width: 20.9375rem;
+    height: 6.875rem;
+    overflow: hidden;
+    border-radius: 1.1875rem;
+}
+.container_block-title img{
+    width: 100%;
+    height: 100%;
+}
+.container_block-menu {
+    width: 31.25rem;
+    position: relative;
+    padding: 1.5625rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #0c65e151;
+    border-radius: .9375rem;
+    box-shadow: .25rem .25rem .5rem rgb(119, 119, 119);
+}
+.block-menu_item {
+    position: relative;
+    width: 12.5rem;
+    height: 4.6875rem;
+    overflow: hidden;
+    border-radius: 1.1875rem;
+    box-shadow: 0.125rem .125rem .3125rem rgb(73, 73, 73);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+.block-menu_item:hover{
+    border: 5px solid rgb(255, 255, 255);
+}
+.block-menu_item img{
+    width: 100%;
+    height: 100%;
+}
