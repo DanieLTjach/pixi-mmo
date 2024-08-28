@@ -15,6 +15,7 @@
 
     export const ASSETS = {
         BACKGROUND: 'assets/sky.png',
+        BACKGROUND_INVENTORY: 'assets/InventoryBackground.png',
         PLAYER: 'assets/player.png',
         ANOTHER_PLAYER: 'assets/another_player.png',
         SOMETHING: 'assets/something.png'

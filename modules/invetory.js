@@ -1,6 +1,13 @@
+// Импорт необходимых ассетов из status.js
+import { CONTROLLER, ASSETS } from "../status.js";
+
 export default class Inventory extends Phaser.Scene {
     constructor() {
         super({ key: "Inventory" });
+    }
+
+    preload() {
+        this.load.image('BACKGROUND_INVENTORY', ASSETS.BACKGROUND_INVENTORY);
     }
 
     create() {
@@ -9,9 +16,8 @@ export default class Inventory extends Phaser.Scene {
         this.items = []; // Массив для хранения предметов
         this.inventoryGroup = this.add.group();
 
-        
-        this.background = this.add.rectangle(400, 300, 300, 200, 0x6666ff);
-        this.inventoryGroup.add(this.background);
+        this.BACKGROUND_INVENTORY = this.add.image(400, 300, 'BACKGROUND_INVENTORY');
+        this.inventoryGroup.add(this.BACKGROUND_INVENTORY);
 
         // Текстовые элементы для предметов
         this.itemTextGroup = this.add.group();
